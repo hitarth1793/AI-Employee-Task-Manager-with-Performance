@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Performance Review{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>{{ employee.get_full_name|default:employee.username }}</h1>
+        <p>Review actual work records and set or change the employee's rating.</p>
+    </div>
+    <span class="performance-badge {{ metrics.category|lower }} large">{{ metrics.category|title }}</span>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <h2>Performance Summary</h2>
+        <div class="performance-summary">
+            <div><span>Overall Performance</span><strong>{{ metrics.category|title }}</strong></div>
+            <div><span>Calculated Rating</span><strong>{{ metrics.calculated_category|title }}</strong></div>
+            <div><span>Task Completion</span><strong>{{ metrics.task_completion|floatformat:0 }}%</strong></div>
+            <div><span>On-Time Delivery</span><strong>{{ metrics.on_time_delivery|floatformat:0 }}%</strong></div>
+            <div><span>Attendance</span><strong>{{ metrics.attendance_score|floatformat:0 }}%</strong></div>
+            <div><span>Delayed Tasks</span><strong>{{ metrics.delayed_tasks }}</strong></div>
+            <div><span>Approved Leaves</span><strong>{{ metrics.approved_leaves }}</strong></div>
+            <div><span>Unapproved Absences</span><strong>{{ metrics.unapproved_absences }}</strong></div>
+            <div><span>Leave Discipline</span><strong>{{ metrics.leave_discipline|floatformat:0 }}%</strong></div>
+        </div>
+        <p class="performance-rule">
+            Rating rules: <b>Excellent</b> 90%+, <b>Good</b> 75–89%, <b>Average</b> 50–74%, <b>Poor</b> below 50%.
+        </p>
+    </div>
+
+    <div class="card form-card">
+        <h2>Save Admin Review</h2>
+        <p class="muted">Choose a rating to override the calculated category. Choose “Automatic (calculated)” to use the score-based rating again.</p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                <p>
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {{ field.errors }}
+                </p>
+            {% endfor %}
+            <button class="btn primary" type="submit">Save Performance Review</button>
+        </form>
+    </div>
+</div>
+
+<div class="card table-card">
+    <h2>Performance History</h2>
+    <table>
+        <thead>
+            <tr><th>Period</th><th>Performance</th><th>Delayed Tasks</th><th>Absences</th><th>Reviewed By</th><th>Comment</th></tr>
+        </thead>
+        <tbody>
+        {% for review in history %}
+            <tr>
+                <td>{{ review.review_start|date:"d M Y" }} – {{ review.review_end|date:"d M Y" }}</td>
+                <td><span class="performance-badge {{ review.category|lower }}">{{ review.category|title }}</span></td>
+                <td>{{ review.delayed_tasks }}</td>
+                <td>{{ review.unapproved_absences }}</td>
+                <td>{{ review.reviewed_by.get_full_name|default:review.reviewed_by.username|default:"Admin" }}</td>
+                <td>{{ review.comment|default:"-" }}</td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="6">No saved performance reviews yet.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

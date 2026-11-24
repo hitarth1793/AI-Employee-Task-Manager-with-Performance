@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>{{ title }}</h1><p>Create or update a department.</p></div></div>
+<div class="card form-card"><form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn primary">Save Department</button></form></div>
+{% endblock %}

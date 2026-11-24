@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Employee Performance{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Employee Performance</h1>
+        <p>Ratings use task, attendance and leave records unless an admin sets a manual rating.</p>
+    </div>
+</div>
+
+<div class="stats">
+    <div class="stat"><span>Excellent</span><strong>{{ categories.EXCELLENT }}</strong></div>
+    <div class="stat"><span>Good</span><strong>{{ categories.GOOD }}</strong></div>
+    <div class="stat"><span>Average</span><strong>{{ categories.AVERAGE }}</strong></div>
+    <div class="stat danger"><span>Poor</span><strong>{{ categories.POOR }}</strong></div>
+</div>
+
+<div class="card performance-note">
+    <b>Review period:</b> {{ start_date|date:"d M Y" }} – {{ end_date|date:"d M Y" }}.
+    Approved leave is not counted as a performance problem; recorded absences without an approved leave are considered unapproved.
+</div>
+
+<div class="card table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Task Completion</th>
+                <th>Delayed Tasks</th>
+                <th>Attendance</th>
+                <th>Approved Leaves</th>
+                <th>Performance</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in rows %}
+            <tr>
+                <td>
+                    <b>{{ row.employee.get_full_name|default:row.employee.username }}</b><br>
+                    <small>{{ row.employee.profile.job_title|default:"Employee" }}</small>
+                </td>
+                <td>{{ row.metrics.completed_tasks }} / {{ row.metrics.total_tasks }}</td>
+                <td>{{ row.metrics.delayed_tasks }}</td>
+                <td>{{ row.metrics.attendance_score|floatformat:0 }}%</td>
+                <td>{{ row.metrics.approved_leaves }}</td>
+                <td>
+                    <span class="performance-badge {{ row.metrics.category|lower }}">
+                        {{ row.metrics.category|title }}
+                    </span>
+                </td>
+                <td><a class="btn small" href="{% url 'performance:detail' row.employee.id %}">Review</a></td>
+            </tr>
+        {% empty %}
+            <tr><td colspan="7">No employees found.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

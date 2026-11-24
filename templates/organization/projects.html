@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>Projects</h1><p>Active and archived project workspaces.</p></div>
+{% if can_manage %}<a class="btn primary" href="{% url 'organization:project_create' %}">Create Project</a>{% endif %}</div>
+<div class="card form-card"><form method="get"><label>Search <input name="q" value="{{ query }}" placeholder="Project name"></label>
+<label>Status <select name="status"><option value="ACTIVE" {% if status == "ACTIVE" %}selected{% endif %}>Active</option><option value="ARCHIVED" {% if status == "ARCHIVED" %}selected{% endif %}>Archived</option></select></label><button class="btn">Filter</button></form></div>
+<div class="card table-card"><table><thead><tr><th>Project</th><th>Team</th><th>Dates</th><th>Status</th>{% if can_manage %}<th>Actions</th>{% endif %}</tr></thead><tbody>
+{% for project in projects %}<tr><td><strong>{{ project.name }}</strong><br>{{ project.description|default:""|truncatechars:100 }}</td><td>{{ project.team.name }} ({{ project.team.department.name }})</td><td>{{ project.start_date }} – {{ project.end_date }}</td><td>{{ project.get_status_display }}</td>
+{% if can_manage %}<td><a class="btn small" href="{% url 'organization:project_edit' project.pk %}">Edit</a>{% if project.status == "ACTIVE" %}<form method="post" action="{% url 'organization:project_archive' project.pk %}" style="display:inline">{% csrf_token %}<button class="btn small danger-btn" type="submit">Archive</button></form>{% endif %}</td>{% endif %}</tr>
+{% empty %}<tr><td colspan="5">No projects found.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

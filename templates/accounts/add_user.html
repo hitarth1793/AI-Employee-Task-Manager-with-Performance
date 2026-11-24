@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Add User</h1>
+        <p>Create a manager or employee account from the admin panel.</p>
+    </div>
+</div>
+<div class="card form-card">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn primary">Create User</button>
+    </form>
+</div>
+{% endblock %}

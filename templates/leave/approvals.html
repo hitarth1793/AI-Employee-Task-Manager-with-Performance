@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>Leave Approvals</h1><p>Review pending employee leave requests.</p></div></div>
+<div class="card table-card"><table><thead><tr><th>Employee</th><th>Type</th><th>Dates</th><th>Reason</th><th>Action</th></tr></thead><tbody>{% for l in leaves %}<tr><td>{{ l.user.username }}</td><td>{{ l.get_leave_type_display }}</td><td>{{ l.start_date }} → {{ l.end_date }}</td><td>{{ l.reason }}</td><td><form method="post" action="{% url 'leave_decide' l.pk 'approve' %}" style="display:inline">{% csrf_token %}<button class="btn small">Approve</button></form> <form method="post" action="{% url 'leave_decide' l.pk 'reject' %}" style="display:inline">{% csrf_token %}<button class="btn small danger-btn">Reject</button></form></td></tr>{% empty %}<tr><td colspan="5">No pending approvals.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

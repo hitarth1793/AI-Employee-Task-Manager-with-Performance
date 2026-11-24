@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>Edit Employee</h1><p>{{ employee.display_name }}</p></div></div>
+<div class="card form-card"><form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn primary">Update Employee</button></form></div>
+{% endblock %}

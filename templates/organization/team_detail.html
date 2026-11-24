@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>{{ team.name }}</h1><p>{{ team.department.name }}</p></div>
+{% if can_manage %}<a class="btn primary" href="{% url 'organization:team_edit' team.pk %}">Edit Team</a>{% endif %}</div>
+<div class="card table-card"><h2>Team Members</h2><table><thead><tr><th>Employee</th><th>Email</th><th>Job Title</th></tr></thead><tbody>
+{% for member in team.members.all %}<tr><td>{{ member.get_full_name|default:member.username }}</td><td>{{ member.email }}</td><td>{{ member.profile.job_title|default:"-" }}</td></tr>
+{% empty %}<tr><td colspan="3">No team members.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

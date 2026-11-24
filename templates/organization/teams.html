@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>Teams</h1><p>Teams and their department membership.</p></div>
+{% if can_manage %}<a class="btn primary" href="{% url 'organization:team_create' %}">Create Team</a>{% endif %}</div>
+<div class="card table-card"><table><thead><tr><th>Team</th><th>Department</th><th>Members</th><th>Details</th></tr></thead><tbody>
+{% for team in teams %}<tr><td>{{ team.name }}</td><td>{{ team.department.name }}</td><td>{{ team.members.count }}</td><td><a class="btn small" href="{% url 'organization:team_detail' team.pk %}">View</a>{% if can_manage %} <a class="btn small" href="{% url 'organization:team_edit' team.pk %}">Edit</a>{% endif %}</td></tr>
+{% empty %}<tr><td colspan="4">No teams found.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

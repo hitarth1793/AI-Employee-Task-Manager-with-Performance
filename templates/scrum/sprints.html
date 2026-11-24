@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>Sprint Management</h1><p>Plan sprint goals, backlog and progress.</p></div>{% if user.profile.role != "EMPLOYEE" %}<a class="btn primary" href="{% url 'sprint_create' %}">+ Create Sprint</a>{% endif %}</div>
+<div class="module-grid">
+{% for sprint in sprints %}
+  <div class="card sprint-card"><h2>{{ sprint.name }}</h2><p>{{ sprint.goal }}</p><small>{{ sprint.start_date }} → {{ sprint.end_date }}</small><div class="progress"><i style="width:{{ sprint.completion_percent }}%;"></i></div><b>{{ sprint.completion_percent }}% complete</b><p>{{ sprint.tasks.count }} tasks · {% if sprint.closed %}Closed{% else %}Active{% endif %}</p></div>
+{% empty %}<div class="card"><p>No sprints created yet.</p></div>{% endfor %}
+</div>
+{% endblock %}

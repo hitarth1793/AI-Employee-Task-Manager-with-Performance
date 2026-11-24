@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Employee Dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div><h1>Employee Dashboard</h1><p>Your personal work center, deadlines and AI assistant.</p></div>
+    <a href="{% url 'assistant' %}" class="btn ai">✦ Ask AI</a>
+</div>
+<div class="stats">
+    <div class="stat"><span>My Tasks</span><strong>{{ total_tasks }}</strong></div>
+    <div class="stat"><span>Pending</span><strong>{{ pending }}</strong></div>
+    <div class="stat"><span>Completed</span><strong>{{ completed }}</strong></div>
+    <div class="stat danger"><span>Overdue</span><strong>{{ overdue }}</strong></div>
+</div>
+<div class="grid-2">
+    <div class="card">
+        <div class="card-head"><h2>Today's Work</h2><a href="{% url 'task_list' %}">View all →</a></div>
+        {% for task in my_tasks|slice:":6" %}
+        <div class="task-row">
+            <div><b>{{ task.title }}</b><small>{{ task.deadline|date:"d M Y H:i"|default:"No deadline" }}</small></div>
+            <span class="badge {{ task.status|lower }}">{{ task.get_status_display }}</span>
+        </div>
+        {% empty %}<p class="muted">No tasks assigned.</p>{% endfor %}
+    </div>
+    <div class="card">
+        <div class="card-head"><h2>Notifications</h2><a href="{% url 'notifications' %}">See all →</a></div>
+        {% for n in notifications %}
+            <div class="notice"><b>{{ n.title }}</b><small>{{ n.message }}</small></div>
+        {% empty %}<p class="muted">No new notifications.</p>{% endfor %}
+    </div>
+</div>
+<div class="assistant-banner">
+    <div><strong>✦ AI Virtual Assistant</strong><p>Ask about your tasks, deadlines, leave balance or how to submit work.</p></div>
+    <a class="btn primary" href="{% url 'assistant' %}">Chat with AI</a>
+</div>
+{% endblock %}

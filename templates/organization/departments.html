@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>Departments</h1><p>Manage department records.</p></div>
+{% if can_manage %}<a class="btn primary" href="{% url 'organization:department_create' %}">Add Department</a>{% endif %}</div>
+<div class="card table-card"><table><thead><tr><th>Name</th><th>Description</th><th>Teams</th>{% if can_manage %}<th>Actions</th>{% endif %}</tr></thead><tbody>
+{% for department in departments %}<tr><td>{{ department.name }}</td><td>{{ department.description|default:"-" }}</td><td>{{ department.teams.count }}</td>
+{% if can_manage %}<td><a class="btn small" href="{% url 'organization:department_edit' department.pk %}">Edit</a>
+<form method="post" action="{% url 'organization:department_delete' department.pk %}" style="display:inline">{% csrf_token %}<button class="btn small danger-btn" type="submit">Delete</button></form></td>{% endif %}</tr>
+{% empty %}<tr><td colspan="4">No departments found.</td></tr>{% endfor %}</tbody></table></div>
+{% endblock %}

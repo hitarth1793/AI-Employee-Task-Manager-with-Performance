@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>Scrum / Kanban Board</h1><p>Drag tasks between workflow columns.</p></div></div>
+<div class="kanban">
+{% for code,label,tasks in columns %}
+  <section class="kanban-col" data-status="{{ code }}">
+    <header><h3>{{ label }}</h3><span>{{ tasks|length }}</span></header>
+    <div class="dropzone">
+    {% for task in tasks %}
+      <article class="kanban-card" draggable="true" data-task="{{ task.id }}">
+        <a href="{% url 'task_detail' task.pk %}"><b>{{ task.title }}</b></a>
+        <p>{{ task.description|truncatechars:80 }}</p>
+        <div><span class="badge priority-{{ task.priority|lower }}">{{ task.get_priority_display }}</span></div>
+        <small>Due: {{ task.deadline|date:"d M H:i"|default:"-" }}</small>
+      </article>
+    {% empty %}<div class="empty-drop">Drop tasks here</div>{% endfor %}
+    </div>
+  </section>
+{% endfor %}
+</div>
+{% endblock %}

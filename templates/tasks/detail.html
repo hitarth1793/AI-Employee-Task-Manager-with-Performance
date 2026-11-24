@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>{{ task.title }}</h1><p>Task #{{ task.id }} · Created {{ task.created_at|date:"d M Y H:i" }}</p></div><a class="btn" href="{% url 'task_update' task.pk %}">Edit</a></div>
+<div class="grid-2">
+    <div class="card">
+        <h2>Task Details</h2>
+        <p>{{ task.description|linebreaks }}</p>
+        <div class="detail-list">
+            <span>Assigned to <b>{{ task.assigned_to.get_full_name|default:task.assigned_to.username }}</b></span>
+            <span>Priority <b>{{ task.get_priority_display }}</b></span>
+            <span>Status <b>{{ task.get_status_display }}</b></span>
+            <span>Deadline <b>{{ task.deadline|date:"d M Y H:i"|default:"Not set" }}</b></span>
+            {% if task.attachment %}<span>Attachment <a href="{{ task.attachment.url }}">Open file</a></span>{% endif %}
+        </div>
+        <h3>Task History</h3>
+        {% for h in task.history.all %}
+        <div class="history"><b>{{ h.user.username }}</b> — {{ h.action }} <small>{{ h.created_at|date:"d M H:i" }}</small></div>
+        {% endfor %}
+    </div>
+    <div class="card">
+        <h2>Comments</h2>
+        {% for c in task.comments.all %}
+        <div class="comment"><b>{{ c.user.username }}</b><small>{{ c.created_at|date:"d M Y H:i" }}</small><p>{{ c.comment }}</p></div>
+        {% empty %}<p class="muted">No comments yet.</p>{% endfor %}
+        <form method="post" action="{% url 'add_comment' task.pk %}">{% csrf_token %}{{ form.as_p }}<button class="btn primary">Add Comment</button></form>
+    </div>
+</div>
+{% endblock %}

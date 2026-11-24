@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>Notifications</h1><p>Task, sprint and system updates.</p></div></div>
+<div class="card">
+{% for n in notifications %}
+  <div class="notice {% if not n.is_read %}unread{% endif %}"><div><b>{{ n.title }}</b><p>{{ n.message }}</p><small>{{ n.created_at|date:"d M Y H:i" }}</small></div>{% if not n.is_read %}<form method="post" action="{% url 'notification_read' n.pk %}">{% csrf_token %}<button class="btn small" type="submit">Mark read</button></form>{% endif %}</div>
+{% empty %}<p class="muted">No notifications.</p>{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Employee Management</h1>
+        <p>Manage your team members and departments.</p>
+    </div>
+    {% if user.profile.role != "EMPLOYEE" %}
+    <a class="btn primary" href="{% url 'accounts:employee_create' %}">+ Add Manager / Employee</a>
+    {% endif %}
+</div>
+<div class="card table-card">
+    <table>
+        <thead><tr><th>Employee</th><th>Department</th><th>Team</th><th>Job Title</th><th>Performance</th><th>Action</th></tr></thead>
+        <tbody>
+        {% for e in employees %}
+            <tr>
+                <td><b>{{ e.display_name }}</b><br><small>{{ e.user.email }}</small></td>
+                <td>{{ e.department|default:"-" }}</td>
+                <td>{{ e.team|default:"-" }}</td>
+                <td>{{ e.job_title|default:"-" }}</td>
+                <td>{% if user.profile.role == "ADMIN" %}<a class="btn small" href="{% url 'performance:detail' e.user.id %}">Review</a>{% else %}-{% endif %}</td>
+                <td><a class="btn small" href="{% url 'accounts:employee_edit' e.user.id %}">Edit</a></td>
+            </tr>
+        {% empty %}<tr><td colspan="6">No employees yet.</td></tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

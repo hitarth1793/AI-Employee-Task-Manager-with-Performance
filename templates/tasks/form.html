@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>{{ title }}</h1><p>Task details, assignment and deadline.</p></div></div>
+<div class="card form-card"><form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}<button class="btn primary">Save Task</button></form></div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>Leave Management</h1><p>Apply for leave and track your balance.</p></div></div>
+<div class="stats"><div class="stat"><span>Casual</span><strong>{{ balance.casual_balance }}</strong></div><div class="stat"><span>Sick</span><strong>{{ balance.sick_balance }}</strong></div><div class="stat"><span>Earned</span><strong>{{ balance.earned_balance }}</strong></div></div>
+<div class="grid-2">
+  <div class="card form-card"><h2>Apply Leave</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn primary">Submit Request</button></form></div>
+  <div class="card"><h2>My Requests</h2>{% for l in leaves %}<div class="notice"><b>{{ l.get_leave_type_display }}: {{ l.start_date }} → {{ l.end_date }}</b><span class="badge">{{ l.get_status_display }}</span><p>{{ l.reason }}</p></div>{% empty %}<p class="muted">No leave requests.</p>{% endfor %}</div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="brand big">AI TASK<span>PRO</span></div>
+        <h1>Welcome back</h1>
+        <p class="muted">Sign in to your employee management workspace.</p>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn primary wide">Login</button>
+        </form>
+        <p class="center">New user? <a href="{% url 'accounts:register' %}">Create account</a></p>
+        <div class="demo-box">
+            <b>Demo:</b> manager / manager123 &nbsp; | &nbsp; employee / employee123
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>✦ AI Assistant</h1><p>Ask a question or get help understanding and improving code.</p></div></div>
+<div class="chat-ai card">
+    <div class="assistant-toolbar">
+        <label for="saved-conversations">Saved conversations</label>
+        <select id="saved-conversations" aria-label="Saved conversations">
+            <option value="">Current conversation</option>
+        </select>
+        <button id="new-conversation" class="btn small" type="button">New chat</button>
+        <button id="delete-conversation" class="btn small" type="button" disabled>Delete chat</button>
+        <button id="export-conversation" class="btn small" type="button">Export chat</button>
+        <button id="share-conversation" class="btn small" type="button">Copy chat</button>
+    </div>
+    <div class="assistant-media">
+        <div class="assistant-avatar">
+            <div class="persona persona-gemini" aria-hidden="true">✦</div>
+            <div>
+                <div class="avatar-label">AI Assistant</div>
+                <div class="assistant-status" id="assistant-status" aria-live="polite">Ready to help</div>
+            </div>
+        </div>
+        <div class="assistant-controls">
+            <label class="provider-picker" for="assistant-provider">
+                <span>AI provider</span>
+                <select id="assistant-provider" aria-label="Choose AI provider">
+                    {% for option in provider_options %}
+                    <option value="{{ option.id }}">{{ option.name }}{% if not option.configured and option.id != "local" and option.id != "auto" %} (not configured){% endif %}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <button id="check-provider" class="btn small" type="button">Check provider</button>
+            <button id="start-voice" class="btn small" type="button">Voice input</button>
+            <button id="speak-answer" class="btn small" type="button">Read answer aloud</button>
+        </div>
+    </div>
+    <div class="assistant-preferences">
+        <label for="assistant-language">Answer language</label>
+        <select id="assistant-language">
+            <option value="auto">Auto detect</option>
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+        </select>
+        <label class="context-consent">
+            <input id="include-task-context" type="checkbox">
+            Include my active task details
+        </label>
+        <small>When enabled, up to 8 of your active tasks (title, status, priority, deadline and project) are sent with your prompt. Auto may send them to a cloud provider if it falls back.</small>
+        <span id="provider-status" role="status" aria-live="polite"></span>
+    </div>
+    <div id="chat-log" aria-live="polite" aria-label="Conversation">
+        <div class="bubble bot">Hi {{ user.first_name|default:user.username }}! Choose Auto to try configured AI providers in order, switch providers any time, or ask me to review code.</div>
+    </div>
+    <form id="assistant-form" class="chat-input">
+        {% csrf_token %}
+        <div class="assistant-composer">
+            <input id="question" placeholder="Ask anything…" autocomplete="off" aria-label="Your message">
+            <button id="assistant-send" class="btn primary" type="submit">Send</button>
+            <button id="assistant-stop" class="btn secondary" type="button" hidden>Stop</button>
+        </div>
+        <details class="code-attachment">
+            <summary>Attach code for review</summary>
+            <textarea id="code-text" placeholder="Paste code here. Add a question above for a more focused review." rows="6"></textarea>
+        </details>
+        <small class="assistant-note">Auto tries configured providers in order: Gemini, GroqCloud, Ollama, then other configured APIs. GroqCloud needs a Groq API key; Ollama runs locally. Messages may be sent to a cloud provider when Auto falls back. Private task and company records are not included automatically. Speech plays only when you press “Read answer aloud”.</small>
+    </form>
+    <div class="suggestions">
+        <button type="button" data-q="Review this code">Review code</button>
+        <button type="button" data-q="Explain a technical concept in simple terms">Explain a concept</button>
+        <button type="button" data-q="Help me write a clear, professional email">Draft an email</button>
+    </div>
+    <div id="share-chat-status" role="status" aria-live="polite"></div>
+</div>
+{% endblock %}

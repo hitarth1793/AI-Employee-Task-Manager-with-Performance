@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}AI Task Manager{% endblock %}</title>
+
+    <!-- Google Font -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    >
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+
+<body>
+
+{% if user.is_authenticated %}
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    <!-- Brand -->
+    <div class="brand">
+
+        <div class="brand-icon">
+            <i class="fa-solid fa-bolt"></i>
+        </div>
+
+        <div>
+            <span class="brand-title">AI TASK</span>
+            <span class="brand-pro">PRO</span>
+        </div>
+
+    </div>
+
+
+    <!-- User -->
+    <div class="userbox">
+
+        <div class="avatar">
+            {{ user.first_name|default:user.username|slice:":1"|upper }}
+        </div>
+
+        <div class="userinfo">
+
+            <strong>
+                {{ user.get_full_name|default:user.username }}
+            </strong>
+
+            <small>
+                {{ user.profile.get_role_display }}
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- Navigation -->
+
+    <nav class="menu">
+
+        <div class="nav-section">
+            MAIN
+        </div>
+
+        <a href="{% url 'dashboard' %}">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+
+
+        <a href="{% url 'task_list' %}">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Tasks</span>
+        </a>
+
+
+        <a href="{% url 'scrum_board' %}">
+            <i class="fa-solid fa-table-columns"></i>
+            <span>Scrum Board</span>
+        </a>
+
+
+        <a href="{% url 'sprint_list' %}">
+            <i class="fa-solid fa-arrows-spin"></i>
+            <span>Sprints</span>
+        </a>
+
+
+        {% if user.profile.role != "EMPLOYEE" %}
+
+        <a href="{% url 'accounts:employees' %}">
+            <i class="fa-solid fa-users"></i>
+            <span>Employees</span>
+        </a>
+
+        {% endif %}
+
+        <a href="{% url 'organization:teams' %}">
+            <i class="fa-solid fa-people-group"></i>
+            <span>Teams</span>
+        </a>
+
+        <a href="{% url 'organization:projects' %}">
+            <i class="fa-solid fa-diagram-project"></i>
+            <span>Projects</span>
+        </a>
+
+        {% if user.profile.role == "ADMIN" %}
+        <a href="{% url 'organization:departments' %}">
+            <i class="fa-solid fa-building"></i>
+            <span>Departments</span>
+        </a>
+        {% endif %}
+
+
+        <div class="nav-section">
+            AI & ANALYTICS
+        </div>
+
+
+        <a href="{% url 'assistant' %}">
+            <i class="fa-solid fa-robot"></i>
+            <span>AI Assistant</span>
+            <span class="ai-badge">AI</span>
+        </a>
+
+
+        <a href="{% url 'reports' %}">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Reports</span>
+        </a>
+
+        {% if user.profile.role == "ADMIN" %}
+
+        <a href="{% url 'performance:list' %}">
+            <i class="fa-solid fa-user-check"></i>
+            <span>Employee Performance</span>
+        </a>
+
+        {% endif %}
+
+
+        <div class="nav-section">
+            WORKSPACE
+        </div>
+
+
+        <a href="{% url 'calendar' %}">
+            <i class="fa-regular fa-calendar-days"></i>
+            <span>Calendar</span>
+        </a>
+
+
+        <a href="{% url 'chat' %}">
+            <i class="fa-solid fa-comments"></i>
+            <span>Team Chat</span>
+        </a>
+
+
+        <a href="{% url 'leave' %}">
+            <i class="fa-solid fa-plane-departure"></i>
+            <span>Leave</span>
+        </a>
+
+
+        <a href="{% url 'attendance' %}">
+            <i class="fa-solid fa-user-check"></i>
+            <span>Attendance</span>
+        </a>
+
+
+        {% if user.profile.role != "EMPLOYEE" %}
+
+        <a href="{% url 'leave_approvals' %}">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Leave Approvals</span>
+        </a>
+
+        {% endif %}
+
+
+        <a href="{% url 'notifications' %}">
+            <i class="fa-regular fa-bell"></i>
+            <span>Notifications</span>
+            <span class="notification-dot"></span>
+        </a>
+
+
+        <a href="{% url 'accounts:profile' %}">
+            <i class="fa-solid fa-user-gear"></i>
+            <span>Profile</span>
+        </a>
+
+    </nav>
+
+
+    <!-- Logout -->
+
+    <form
+        method="post"
+        action="{% url 'accounts:logout' %}"
+        class="logout-form"
+    >
+
+        {% csrf_token %}
+
+        <button type="submit">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            <span>Logout</span>
+
+        </button>
+
+    </form>
+
+</aside>
+
+
+{% endif %}
+
+
+<!-- ================= MAIN ================= -->
+
+<main
+    class="{% if user.is_authenticated %}main{% else %}main-full{% endif %}"
+>
+
+
+    <!-- Django Messages -->
+
+    {% if messages %}
+
+        <div class="message-container">
+
+            {% for message in messages %}
+
+                <div class="alert">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    <span>
+                        {{ message }}
+                    </span>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- Page Content -->
+
+    {% block content %}{% endblock %}
+
+
+</main>
+
+
+<!-- DO NOT CHANGE APP.JS -->
+
+<script src="/static/js/app.js"></script>
+
+</body>
+
+</html>

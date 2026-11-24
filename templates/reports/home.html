@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><div><h1>Reports & Analytics</h1><p>Task completion, productivity and team reports.</p></div><div style="display:flex;gap:12px;flex-wrap:wrap;"><a class="btn primary" href="{% url 'task_csv' %}?{{ request.GET.urlencode }}">Export CSV</a><a class="btn secondary" href="{% url 'task_pdf' %}?{{ request.GET.urlencode }}">Export PDF</a></div></div>
+<div class="card form-card"><form method="get">
+<label>Due from <input type="date" name="start_date" value="{{ filters.start_date }}"></label>
+<label>Due through <input type="date" name="end_date" value="{{ filters.end_date }}"></label>
+<label>Project <select name="project"><option value="">All accessible projects</option>{% for project in filters.projects %}<option value="{{ project.pk }}" {% if filters.project == project.pk|stringformat:"s" %}selected{% endif %}>{{ project.name }}</option>{% endfor %}</select></label>
+<label>Status <select name="status"><option value="">All statuses</option><option value="TODO" {% if filters.status == "TODO" %}selected{% endif %}>To Do</option><option value="IN_PROGRESS" {% if filters.status == "IN_PROGRESS" %}selected{% endif %}>In Progress</option><option value="REVIEW" {% if filters.status == "REVIEW" %}selected{% endif %}>Review</option><option value="COMPLETED" {% if filters.status == "COMPLETED" %}selected{% endif %}>Completed</option></select></label>
+<label>Task title <input name="q" value="{{ filters.query }}" placeholder="Search title"></label><button class="btn primary">Apply Filters</button><a class="btn secondary" href="{% url 'reports' %}">Clear</a>
+</form></div>
+<div class="stats"><div class="stat"><span>Total</span><strong>{{ stats.total }}</strong></div><div class="stat"><span>Completed</span><strong>{{ stats.completed }}</strong></div><div class="stat"><span>Pending</span><strong>{{ stats.pending }}</strong></div><div class="stat danger"><span>Overdue</span><strong>{{ stats.overdue }}</strong></div></div>
+<div class="card table-card"><h2>Workload by Employee</h2><table><thead><tr><th>Employee</th><th>Total Tasks</th></tr></thead><tbody>{% for row in employees %}<tr><td>{{ row.assigned_to__username }}</td><td>{{ row.total }}</td></tr>{% empty %}<tr><td colspan="2">No data.</td></tr>{% endfor %}</tbody></table></div>
+<div class="card"><h2>Available Report Types</h2><div class="report-grid"><span>Employee Report</span><span>Task Completion</span><span>Performance</span><span>Monthly Report</span><span>Department Report</span><span>Productivity Report</span></div></div>
+{% endblock %}

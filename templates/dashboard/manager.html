@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Manager Dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+    <div><h1>{{ role|title }} Dashboard</h1><p>Team overview, productivity and AI-powered insights.</p></div>
+    <a href="{% url 'task_create' %}" class="btn primary">+ Create Task</a>
+</div>
+<div class="stats">
+    <div class="stat"><span>Employees</span><strong>{{ employees }}</strong></div>
+    <div class="stat"><span>Total Tasks</span><strong>{{ total_tasks }}</strong></div>
+    <div class="stat"><span>Pending</span><strong>{{ pending }}</strong></div>
+    <div class="stat"><span>Completed</span><strong>{{ completed }}</strong></div>
+    <div class="stat danger"><span>Overdue</span><strong>{{ overdue }}</strong></div>
+    <div class="stat"><span>Active Sprints</span><strong>{{ sprints }}</strong></div>
+</div>
+<div class="grid-2">
+    <div class="card">
+        <div class="card-head"><h2>Team Productivity</h2><a href="{% url 'reports' %}">View reports →</a></div>
+        {% for row in team_stats %}
+        <div class="progress-row"><span>{{ row.assigned_to__username }}</span><b>{{ row.total }} tasks</b></div>
+        <div class="progress"><i style="width:{{ row.total|add:"0" }}0%;"></i></div>
+        {% empty %}<p class="muted">No task data yet.</p>{% endfor %}
+    </div>
+    <div class="card insight">
+        <h2>✦ AI Insights</h2>
+        <p>Use the AI assistant to review workload, deadlines and task status.</p>
+        <a class="btn primary" href="{% url 'assistant' %}">Open AI Assistant</a>
+    </div>
+</div>
+{% if user.profile.role == "ADMIN" %}
+<div class="card performance-dashboard-card">
+    <div class="card-head"><h2>Employee Performance</h2><a href="{% url 'performance:list' %}">Open reviews →</a></div>
+    <div class="performance-dashboard-grid">
+        <div><span>Excellent</span><strong>{{ performance_counts.EXCELLENT }}</strong></div>
+        <div><span>Good</span><strong>{{ performance_counts.GOOD }}</strong></div>
+        <div><span>Average</span><strong>{{ performance_counts.AVERAGE }}</strong></div>
+        <div><span>Poor</span><strong>{{ performance_counts.POOR }}</strong></div>
+    </div>
+</div>
+{% endif %}
+<div class="module-grid">
+    <a class="module-card" href="{% url 'accounts:employees' %}"><b>♟</b><span>Employees</span><small>Team management</small></a>
+    <a class="module-card" href="{% url 'task_list' %}"><b>✓</b><span>Tasks</span><small>Assign & track</small></a>
+    <a class="module-card" href="{% url 'scrum_board' %}"><b>▦</b><span>Scrum</span><small>Kanban board</small></a>
+    <a class="module-card" href="{% url 'reports' %}"><b>▤</b><span>Reports</span><small>Analytics</small></a>
+    {% if user.profile.role == "ADMIN" %}<a class="module-card" href="{% url 'performance:list' %}"><b>★</b><span>Performance</span><small>Employee reviews</small></a>{% endif %}
+    <a class="module-card" href="{% url 'calendar' %}"><b>□</b><span>Calendar</span><small>Deadlines & events</small></a>
+    <a class="module-card" href="{% url 'chat' %}"><b>☏</b><span>Team Chat</span><small>Communication</small></a>
+</div>
+{% endblock %}
